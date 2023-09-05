@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="32px" height="32px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+  <title>Nuggets Icon White Outline@2x</title>
+  <defs>
+    <filter x="-21.1%" y="-23.6%" width="142.2%" height="147.2%" filterUnits="objectBoundingBox" id="filter-1">
+      <feOffset dx="1" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"/>
+      <feGaussianBlur stdDeviation="0.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"/>
+      <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"/>
+      <feMerge>
+        <feMergeNode in="shadowMatrixOuter1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <g id="Nuggets-Icon-White-Outline" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="matrix(1.079962, 0, 0, 1.169842, -20.789267, -21.934538)" style="" bx:origin="1 1">
+    <g id="Group" transform="translate(2.500000, 2.000000)">
+      <g id="Nugget-Icon-White-Outline-Grey-Outline" transform="translate(17.000000, 17.000000)">
+        <path d="M19.7248462,-0.25 C20.7644661,-0.25 21.7598192,0.0424042012 22.612416,0.566644475 C23.4650506,1.09090804 24.1749156,1.84702656 24.6435261,2.77442654 L24.6435261,2.77442654 L28.7891589,10.9788085 C29.5807439,12.5453886 29.5776617,14.3951947 28.7808601,15.9591319 L28.7808601,15.9591319 L24.6352273,24.09605 C24.1650272,25.018944 23.4555856,25.7709734 22.6045976,26.2922744 C21.7536472,26.8135523 20.7611635,27.1041205 19.7248462,27.1041205 L19.7248462,27.1041205 L9.39555458,27.1041205 C8.35824476,27.1041205 7.3648983,26.8130011 6.51345222,26.2908334 C5.66196842,25.7686426 4.95239802,25.0153847 4.4826732,24.0911363 L4.4826732,24.0911363 L0.347299621,15.9542182 C-0.446178934,14.3929397 -0.449249254,12.5476131 0.339029275,10.9837064 L0.339029275,10.9837064 L4.47440285,2.7793245 C4.94253319,1.85057645 5.65252207,1.09323341 6.50564768,0.568082349 C7.35873533,0.0429546496 8.35494653,-0.25 9.39555458,-0.25 L9.39555458,-0.25 Z" id="Path" stroke="#C8C8C8" stroke-width="0.5" fill="#FFFFFF"/>
+        <g id="Nugget-Vector-Group-with-Shadow" filter="url(#filter-1)" transform="translate(5.094090, 4.958868)">
+          <polygon id="Fill-1" fill="#8168A0" points="9.31153505 14.2220826 18.6231211 8.20385075 9.31153505 2.18556842"/>
+          <polygon id="Fill-2" fill="#CAC8E9" points="4.13460809 -2.01815257e-05 2.55095174e-05 8.20382048 9.31156056 2.1855886"/>
+          <polygon id="Fill-3" fill="#CAA3C7" points="14.488462 -2.01815257e-05 9.31150954 2.1855886 18.6230956 8.20382048"/>
+          <polygon id="Fill-4" fill="#E4D8EB" points="4.13460809 -2.01815257e-05 9.31156056 2.1855886 14.488462 -2.01815257e-05"/>
+          <polygon id="Fill-5" fill="#793773" points="4.13460809 16.4076813 14.488462 16.4076813 9.31156056 14.2220725"/>
+          <polygon id="Fill-6" fill="#7D4476" points="9.31153505 14.2220826 14.4884875 16.4076914 18.6231211 8.20385075"/>
+          <polygon id="Fill-7" fill="#88739F" points="4.13460809 16.4076813 9.31156056 14.2220725 2.55095174e-05 8.20384066"/>
+          <polygon id="Fill-8" fill="#9B90C1" points="0 8.20383057 9.31153505 14.2220625 9.31153505 2.18559869"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
