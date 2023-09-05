@@ -22,7 +22,7 @@ const styles = {
   },
 }
 
-export default function useQrCode (props: object) {
+export default function QrCode (props: object) {
   const { data, error, isLoading } = useSWR('/api/invite', url => fetcher(`${url}?reason=${props?.reason}`))
 
   if(isLoading) return <div style={styles.container}>Loading...</div>

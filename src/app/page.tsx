@@ -39,7 +39,7 @@ export default async function Home() {
               ASIDE
             </aside>
             <section style={styles.contentBlock}>
-              {/* <QrCode reason="auth" /> */}
+              <QrCode reason="auth" />
               CONTENT
             </section>
           </div>
