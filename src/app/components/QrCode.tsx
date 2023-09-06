@@ -39,9 +39,13 @@ export default function QrCode (props: object) {
   useEffect(() => {
     fetch(`/api/invite?reason=${props?.reason}`)
       // handle fetch response
-      .then((res) => res.status === 200 ? res.json() : { isLoading: false, error: 'Invite create failed', data: null })
+      .then((res) => res.status === 200 ? res.json() : null)
       // set invite state on response parse
-      .then((responseData) => setInvite(responseData))
+      .then((responseData) => {
+        responseData !== null
+          ? setInvite({ isLoading: false, error: null, data: responseData })
+          : setInvite({ isLoading: false, error: 'Invite create failed', data: null })
+      })
   }, [])
 
   if (invite?.isLoading) return <div style={styles.container}>Loading...</div>
