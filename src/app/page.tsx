@@ -40,7 +40,6 @@ export default async function Home() {
             </aside>
             <section style={styles.contentBlock}>
               <QrCode reason="auth" />
-              CONTENT
             </section>
           </div>
         </div>
