@@ -30,6 +30,7 @@ export default function QrCode (props: object) {
     data: null,
   })
   const [inviteTimedOut, setInviteTimedOut] = useState(false)
+  const [isPolling, setIsPolling] = useState(false)
 
   // const { data, error, isLoading } = useSWR('/api/invite', url => fetcher(`${url}?reason=${props?.reason}`))
   // fetch(`/api/invite?reason=${props?.reason}`, { method: 'GET' })
@@ -54,8 +55,13 @@ export default function QrCode (props: object) {
 
   console.log({ deeplink: invite?.data?.deeplink, ref: invite?.data?.ref })
 
-  // set timeout for invite
-  setTimeout(() => setInviteTimedOut(true), TIMEOUT_MS)
+  if(!isPolling) {
+    // prevent further timeouts happening wen we're already polling
+    setIsPolling(true)
+
+    // set timeout running for invite
+    setTimeout(() => setInviteTimedOut(true), TIMEOUT_MS)
+  }
 
   // TODO: poll for updates to session cache
 
