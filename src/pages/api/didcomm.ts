@@ -49,6 +49,8 @@ const handleConnection = async (res, msg) => {
   // check for matching cached invite
   const inviteReason = await cache.get(`invite_${msg.thid}`)
 
+  console.log('> didcomm: handleConnection', `invite_${msg.thid}`, inviteReason)
+
   if (!inviteReason) {
     return res.status(404).json({ error: 'Invite Not Found' })
   }

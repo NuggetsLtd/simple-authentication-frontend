@@ -44,7 +44,7 @@ export default async function handler(req, res) {
   // store invite reason in cache for 5 minutes
   await cache.set(`invite_${data.ref}`, reason, 60 * 5)
 
-  console.log('< generate invite')
+  console.log('< generate invite', `invite_${data.ref}`)
 
   return res.status(200).json(data);
 }
