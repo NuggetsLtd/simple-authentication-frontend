@@ -52,8 +52,6 @@ const handleConnection = async (res, msg) => {
   // check for matching cached invite
   const inviteReason = await cache.get(`invite_${msg.thid}`)
 
-  console.log('> didcomm: handleConnection', `invite_${msg.thid}`, inviteReason)
-
   if (!inviteReason) {
     return res.status(404).json({ error: 'Invite Not Found' })
   }
@@ -66,6 +64,8 @@ const handleConnection = async (res, msg) => {
   if (inviteReason !== 'auth') {
     return res.status(404).json({ error: 'Invite Type Not Found' })
   }
+
+  await cache.set(`session_${msg.thid}`, { status: 'CONNECTED' }, 60 * 5),
 
   // convert reference string to 32 byte padded hex
   const paddedReference = `0x${Buffer.from(msg.thid, 'ascii').toString('hex').padEnd(64, '0')}`
@@ -110,7 +110,7 @@ const handleConnection = async (res, msg) => {
 
   // store session reason in cache for 5 minutes
   await Promise.all([
-    cache.set(`session_${msg.thid}`, { VCProofNonce }, 60 * 5),
+    cache.set(`session_${msg.thid}`, { status: 'DATA_REQUESTED', VCProofNonce }, 60 * 5),
     cache.set(`invite_${msg.thid}`, INVITE_PROCESSED, 60 * 5)
   ])
 
@@ -133,6 +133,13 @@ const handleBasicMessage = async (res, msg) => {
 
   const nonce = cachedSession?.VCProofNonce
 
+  // store session in cache
+  await cache.set(`session_${msg.thid}`, {
+    status: 'VC_RECEIVED',
+    VCProofNonce: nonce,
+    VCProof,
+  }, 60 * 5)
+
   // verify vc proof with nonce
   const response = await fetch(`${communicatorProtocol}://${communicatorHost}:${communicatorPort}/account/verify-proof`, {
     method: 'POST',
@@ -150,6 +157,7 @@ const handleBasicMessage = async (res, msg) => {
 
   // store session in cache
   await cache.set(`session_${msg.thid}`, {
+    status: 'COMPLETE',
     VCProofNonce: nonce,
     VCProof,
     verified
