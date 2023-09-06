@@ -15,15 +15,13 @@ const reasons = {
 }
 
 export default async function handler(req, res) {
+  console.log('> generate invite')
   // check for valid reason
   const reason = reasons[req?.query?.reason]
 
   if (!reason) {
-    console.log(`Invalid reason: ${req?.query?.reason}`)
     return res.status(400).json({ error: 'Invalid reason' })
   }
-
-  console.log(`${communicatorProtocol}://${communicatorHost}:${communicatorPort}/invitation/generate`)
 
   const response = await fetch(`${communicatorProtocol}://${communicatorHost}:${communicatorPort}/invitation/generate`, {
     method: 'POST',
@@ -46,7 +44,9 @@ export default async function handler(req, res) {
   const data = await response.json()
  
   // store invite reason in cache for 5 minutes
-  cache.set(`invite_${reason}_${data.ref}`, true, 60 * 5)
+  await cache.set(`invite_${data.ref}`, reason, 60 * 5)
+
+  console.log('< generate invite')
 
   return res.status(200).json(data);
 }
