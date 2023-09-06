@@ -19,7 +19,7 @@ export default async function handler(req, res) {
   console.log('< invite-status')
 
   if (inviteReason !== 'PROCESSED') {
-    return res.status(200).json({ status: 'PENDING' }) }) 
+    return res.status(200).json({ status: 'PENDING' })
   }
 
   return res.status(200).json(cachedSession)
