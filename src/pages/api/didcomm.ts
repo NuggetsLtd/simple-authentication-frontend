@@ -121,5 +121,34 @@ const handleConnection = async (res, msg) => {
 
 const handleBasicMessage = async (res, msg) => {
   console.log('> didcomm: handleBasicMessage', msg?.body)
+
+  const VCProof = msg?.body?.authenticationOutcome?.userData?.identityVCProof
+
+  // TODO: retrieve nonce from session cache
+  const cachedSession = await cache.get(`session_${msg.thid}`)
+
+  if (!cachedSession) {
+    return res.status(404).json({ error: 'Session Not Found' })
+  }
+
+  const nonce = cachedSession?.VCProofNonce
+
+  // TODO: verify vc proof with nonce
+  const response = await fetch(`${communicatorProtocol}://${communicatorHost}:${communicatorPort}/account/verify-proof`, {
+    method: 'POST',
+    cache: 'no-store',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      VCProof,
+      nonce
+    })
+  })
+
+  console.log('< didcomm: handleBasicMessage', response)
+
+  // TODO: store session in cache
+
   return res.status(200).json("OK")
 }
