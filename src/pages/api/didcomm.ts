@@ -146,7 +146,9 @@ const handleBasicMessage = async (res, msg) => {
     })
   })
 
-  console.log('< didcomm: handleBasicMessage', response)
+  const responseJson = await response.json()
+
+  console.log('< didcomm: handleBasicMessage', responseJson)
 
   // TODO: store session in cache
 
