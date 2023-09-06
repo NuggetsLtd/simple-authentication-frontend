@@ -38,6 +38,9 @@ export default async function handler(req, res) {
     case 'https://didcomm.org/connections/1.0/invitation':
       return handleConnection(res, msg)
 
+    case 'https://didcomm.org/basicmessage/1.0/message':
+      return handleBasicMessage(res, msg)
+
     default:
       return res.status(404).json({ error: 'Message Type Not Found' })
   }
@@ -113,5 +116,10 @@ const handleConnection = async (res, msg) => {
 
   console.log('< didcomm: handleConnection')
 
+  return res.status(200).json("OK")
+}
+
+const handleBasicMessage = async (res, msg) => {
+  console.log('> didcomm: handleBasicMessage', msg?.body)
   return res.status(200).json("OK")
 }
