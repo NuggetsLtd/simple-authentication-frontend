@@ -65,7 +65,7 @@ const handleConnection = async (res, msg) => {
     return res.status(404).json({ error: 'Invite Type Not Found' })
   }
 
-  await cache.set(`session_${msg.thid}`, { status: 'CONNECTED' }, 60 * 5),
+  await cache.set(`session_${msg.thid}`, { status: 'CONNECTED' }, 60 * 5)
 
   // convert reference string to 32 byte padded hex
   const paddedReference = `0x${Buffer.from(msg.thid, 'ascii').toString('hex').padEnd(64, '0')}`
