@@ -1,11 +1,9 @@
-import NodeCache from 'node-cache'
 import dotEnv from 'dotenv'
 import { randomBytes } from 'crypto'
+import cache from '../../helpers/cache'
 
 // load env vars from .env file
 dotEnv.config()
-
-const cache = new NodeCache()
 
 const apiToken = process.env.WEBHOOK_API_TOKEN
 const communicatorProtocol = process.env.COMMUNICATOR_PROTOCOL
@@ -17,10 +15,11 @@ const reasons = {
 }
 
 export default async function handler(req, res) {
+  console.log('> didcomm', req.body)
+
   const authHeader = req?.headers?.authorization
   const msg = req?.body?.msg
 
-  console.log('>>> REQ', req)
 
   if (!authHeader) {
     return res.status(401).json({ error: 'Token required' })
@@ -45,6 +44,8 @@ export default async function handler(req, res) {
 }
 
 const handleConnection = async (res, msg) => {
+  console.log('> didcomm: handleConnection', `invite_${msg.thid}`)
+
   // check for matching cached invite
   const inviteReason = await cache.get(`invite_${msg.thid}`)
 
@@ -53,7 +54,7 @@ const handleConnection = async (res, msg) => {
   }
 
   if (inviteReason === INVITE_PROCESSED) {
-    return res.status(404).json({ error: 'Invite Not Found' })
+    return res.status(200).json('OK')
   }
 
   // check invite type matches DIDComm message type
@@ -107,6 +108,8 @@ const handleConnection = async (res, msg) => {
     cache.set(`session_${msg.thid}`, { VCProofNonce }, 60 * 5),
     cache.set(`invite_${msg.thid}`, INVITE_PROCESSED, 60 * 5)
   ])
+
+  console.log('< didcomm: handleConnection')
 
   return res.status(200).json("OK")
 }

@@ -1,10 +1,8 @@
-import NodeCache from 'node-cache'
 import dotEnv from 'dotenv'
+import cache from '../../helpers/cache'
 
 // load env vars from .env file
 dotEnv.config()
-
-const cache = new NodeCache()
 
 const communicatorProtocol = process.env.COMMUNICATOR_PROTOCOL
 const communicatorHost = process.env.COMMUNICATOR_HOST
