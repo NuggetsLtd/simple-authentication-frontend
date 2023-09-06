@@ -1,5 +1,6 @@
 import NodeCache from 'node-cache'
 import dotEnv from 'dotenv'
+import { randomBytes } from 'crypto'
 
 // load env vars from .env file
 dotEnv.config()
@@ -7,13 +8,19 @@ dotEnv.config()
 const cache = new NodeCache()
 
 const apiToken = process.env.WEBHOOK_API_TOKEN
-
+const communicatorProtocol = process.env.COMMUNICATOR_PROTOCOL
+const communicatorHost = process.env.COMMUNICATOR_HOST
+const communicatorPort = process.env.COMMUNICATOR_PORT
+const INVITE_PROCESSED = 'PROCESSED'
 const reasons = {
   auth: 'auth'
 }
 
 export default async function handler(req, res) {
   const authHeader = req?.headers?.authorization
+  const msg = req?.body?.msg
+
+  console.log('>>> REQ', req)
 
   if (!authHeader) {
     return res.status(401).json({ error: 'Token required' })
@@ -27,11 +34,79 @@ export default async function handler(req, res) {
   }
 
   // TODO: check DIDComm message format
-  // TODO: check for matching cached invite
-  // TODO: check invite type matches DIDComm message type
- 
-  // get invite reason in cache for 5 minutes
-  // const x = cache.get(`invite_${reason}_${data.ref}`)
 
-  return res.status(200).json("hello");
+  switch (msg.type) {
+    case 'https://didcomm.org/connections/1.0/invitation':
+      return handleConnection(res, msg)
+
+    default:
+      return res.status(404).json({ error: 'Message Type Not Found' })
+  }
+}
+
+const handleConnection = async (res, msg) => {
+  // check for matching cached invite
+  const inviteReason = await cache.get(`invite_${msg.thid}`)
+
+  if (!inviteReason) {
+    return res.status(404).json({ error: 'Invite Not Found' })
+  }
+
+  if (inviteReason === INVITE_PROCESSED) {
+    return res.status(404).json({ error: 'Invite Not Found' })
+  }
+
+  // check invite type matches DIDComm message type
+  if (inviteReason !== 'auth') {
+    return res.status(404).json({ error: 'Invite Type Not Found' })
+  }
+
+  // convert reference string to 32 byte padded hex
+  const paddedReference = `0x${Buffer.from(msg.thid, 'ascii').toString('hex').padEnd(64, '0')}`
+
+  const signatureResponse = await fetch(`${communicatorProtocol}://${communicatorHost}:${communicatorPort}/account/signature`, {
+    method: 'POST',
+    cache: 'no-store',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      items: [paddedReference]
+    })
+  })
+
+  const { signature } = await signatureResponse.json()
+  const VCProofNonce = randomBytes(50).toString('base64')
+
+  // send message to user for auth
+  const response = await fetch(`${communicatorProtocol}://${communicatorHost}:${communicatorPort}/message/send`, {
+    method: 'POST',
+    cache: 'no-store',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      to: [msg.from],
+      payload: {
+        msg: {
+          requestDataShareAuthentication: {
+            reference: paddedReference,
+            signature,
+            VCProofNonce
+          },
+          requestType: 'dataShareAuthentication'
+        },
+        threadId: msg.thid
+      }
+    })
+  })
+
+
+  // store session reason in cache for 5 minutes
+  await Promise.all([
+    cache.set(`session_${msg.thid}`, { VCProofNonce }, 60 * 5),
+    cache.set(`invite_${msg.thid}`, INVITE_PROCESSED, 60 * 5)
+  ])
+
+  return res.status(200).json("OK")
 }
