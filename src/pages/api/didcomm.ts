@@ -124,7 +124,7 @@ const handleBasicMessage = async (res, msg) => {
 
   const VCProof = msg?.body?.authenticationOutcome?.userData?.identityVCProof
 
-  // TODO: retrieve nonce from session cache
+  // retrieve nonce from session cache
   const cachedSession = await cache.get(`session_${msg.thid}`)
 
   if (!cachedSession) {
@@ -133,7 +133,7 @@ const handleBasicMessage = async (res, msg) => {
 
   const nonce = cachedSession?.VCProofNonce
 
-  // TODO: verify vc proof with nonce
+  // verify vc proof with nonce
   const response = await fetch(`${communicatorProtocol}://${communicatorHost}:${communicatorPort}/account/verify-proof`, {
     method: 'POST',
     cache: 'no-store',
@@ -146,11 +146,16 @@ const handleBasicMessage = async (res, msg) => {
     })
   })
 
-  const responseJson = await response.json()
+  const { verified } = await response.json()
 
-  console.log('< didcomm: handleBasicMessage', responseJson)
+  // store session in cache
+  await cache.set(`session_${msg.thid}`, {
+    VCProofNonce: nonce,
+    VCProof,
+    verified
+  }, 60 * 5)
 
-  // TODO: store session in cache
+  console.log('< didcomm: handleBasicMessage', verified)
 
   return res.status(200).json("OK")
 }
