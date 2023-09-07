@@ -64,6 +64,13 @@ const styles = {
   buttonHover: {
     opacity: 0.8,
   },
+  responseList: {
+    listStyle: "none",
+    padding: 0,
+    margin: "15px 0 0 0",
+    color: "#fff",
+    fontFamily: "monospace",
+  }
 }
 
 const statusMap = {
@@ -140,7 +147,7 @@ const ResponseArea = (props: { reference?: string }) => {
     setResponses([...responses, data])
   }
 
-  return <ul>{responses.map((response, index) => <li key={index}>{statusMap[response?.status]}</li>)}</ul>
+  return <ul style={styles.responseList}>{responses.map((response, index) => <li key={index}>{statusMap[response?.status]}</li>)}</ul>
 }
 
 export default function UserCommunication () {
