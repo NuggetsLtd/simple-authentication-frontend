@@ -121,10 +121,14 @@ const ResponseArea = (props: { reference?: string }) => {
   const { reference } = props
   const [responses, setResponses] = useState([])
   const [ref, setRef] = useState()
+  const [refreshInterval, setRefreshInterval] = useState(0)
 
   if(reference !== ref) {
     setRef(reference)
     setResponses([])
+
+    // start polling on new ref
+    setRefreshInterval(500)
   }
 
   const { data, error } = useSWR('/api/invite-status', url => fetcher(url, {
@@ -133,7 +137,7 @@ const ResponseArea = (props: { reference?: string }) => {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ ref })
-  }), { refreshInterval: 1000 })
+  }), { refreshInterval, revalidateIfStale: false, revalidateOnMount: false, revalidateOnFocus: false, revalidateOnReconnect: false })
 
   if (data?.error) return <div>ERROR: {data.error}</div>
   if (error) return <div>ERROR: {error}</div>
@@ -146,6 +150,9 @@ const ResponseArea = (props: { reference?: string }) => {
   } else if (data?.status !== responses[responses.length - 1]?.status) {
     setResponses([...responses, data])
   }
+
+  // stop polling once we've got a complete response
+  if (data?.status === 'COMPLETE') setRefreshInterval(0)
 
   return <ul style={styles.responseList}>{responses.map((response, index) => <li key={index}>{statusMap[response?.status]}</li>)}</ul>
 }
