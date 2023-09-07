@@ -152,7 +152,7 @@ const ResponseArea = (props: { reference?: string }) => {
   }
 
   // stop polling once we've got a complete response
-  if (data?.status === 'COMPLETE') setRefreshInterval(0)
+  if (refreshInterval !== 0 &&  data?.status === 'COMPLETE') setRefreshInterval(0)
 
   return <ul style={styles.responseList}>{responses.map((response, index) => <li key={index}>{statusMap[response?.status]}</li>)}</ul>
 }
