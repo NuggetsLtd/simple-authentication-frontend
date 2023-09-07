@@ -158,11 +158,13 @@ const ResponseArea = (props: { reference?: string }) => {
     switch (response?.status) {
       case 'COMPLETE':
         return response?.verified
-          ? `✅ Proof Verified:
-
-  Type: ${response?.VCProof?.type.join(', ')}
-  Name: <strong>${response?.VCProof?.credentialSubject?.givenName} ${response?.VCProof?.credentialSubject?.familyName}</strong>
-`
+          ? (
+            <>
+              <div>✅ Proof Verified:</div>
+              <div>   Type: ${response?.VCProof?.type.join(', ')}</div>
+              <div>   Name: <strong>${response?.VCProof?.credentialSubject?.givenName} ${response?.VCProof?.credentialSubject?.familyName}</strong></div>
+            </>
+          )
           : '❌ Proof Verification Failed'
       default:
         return statusMap[response?.status]
