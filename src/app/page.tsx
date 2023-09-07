@@ -1,5 +1,5 @@
 import Header from './components/Header'
-import QrCode from './components/QrCode'
+import UserCommunication from './components/UserCommunication'
 import InstallNuggetsBanner from './components/InstallNuggetsBanner'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -8,9 +8,6 @@ const styles = {
   container: {
     margin: "0 30px",
   },
-  heroBlock: {
-
-  },
   background: {
     zIndex: -1,
   },
@@ -18,8 +15,15 @@ const styles = {
     display: "flex",
     gap: "30px",
   },
-  contentBlock: {
+  contentAside: {
     flexGrow: 1,
+  },
+  contentBlock: {
+    flexGrow: 3,
+    border: "solid 1px rgba(255, 255, 255, 0.46)",
+    borderRadius: "12px",
+    backgroundColor: "rgba(18, 3, 31, 0.1)",
+    padding: "15px",
   },
 }
 
@@ -31,17 +35,15 @@ export default async function Home() {
       <Header />
       <div style={styles.container}>
         <InstallNuggetsBanner />
-        <div style={styles.heroBlock}>
-          <div style={styles.contentContainer}>
-            <aside style={styles.contentBlock}>
-              {/* <h1 style={styles.newToNuggets.header}>New to Nuggets?</h1>
-              <p>Download for your device</p> */}
-              ASIDE
-            </aside>
-            <section style={styles.contentBlock}>
-              <QrCode reason="auth" />
-            </section>
-          </div>
+        <div style={styles.contentContainer}>
+          <aside style={{ ...styles.contentBlock, ...styles.contentAside }}>
+            {/* <h1 style={styles.newToNuggets.header}>New to Nuggets?</h1>
+            <p>Download for your device</p> */}
+            ASIDE
+          </aside>
+          <section style={styles.contentBlock}>
+            <UserCommunication />
+          </section>
         </div>
       </div>
     </main>
