@@ -96,14 +96,14 @@ const InviteContainer = (props: { invite: CommsInvite, inviteTimedOut: boolean, 
   )
 }
 
-const ResponseArea = (props: { ref?: string }) => {
-  const { ref } = props
+const ResponseArea = (props: { reference?: string }) => {
+  const { reference } = props
   const { data, error } = useSWR('/api/invite-status', url => fetcher(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ ref })
+    body: JSON.stringify({ ref: reference })
   }), { refreshInterval: 1000 })
 
   if (data?.error) return <div>ERROR: {data.error}</div>
@@ -162,7 +162,7 @@ export default function UserCommunication () {
         inviteTimedOut={inviteTimedOut}
         handleInvite={handleInvite}
       />
-      <ResponseArea ref={invite?.data?.ref} />
+      <ResponseArea reference={invite?.data?.ref} />
     </>
   )
 }
