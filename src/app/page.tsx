@@ -27,10 +27,10 @@ const styles = {
   orderedList: {
     listStyle: "decimal outside",
     marginLeft: "15px",
-    lineHeight: "1.3em",
+    lineHeight: "1.4em",
   },
   orderedListItem: {
-    marginBottom: "9px",
+    marginBottom: "15px",
   },
   contentBlock: {
     flexGrow: 1,
@@ -55,8 +55,8 @@ export default async function Home() {
             <ol style={styles.orderedList}>
               <li style={styles.orderedListItem}>Install the Nuggets app on your phone</li>
               <li style={styles.orderedListItem}>Open the app and create an account</li>
-              <li style={styles.orderedListItem}>Click on the &quot;Generate Invite&quot; button</li>
-              <li style={styles.orderedListItem}>Scan the QR code with the Nuggets App</li>
+              <li style={styles.orderedListItem}>Click the &quot;Generate Invite&quot; button on this page</li>
+              <li style={styles.orderedListItem}>Scan the generated QR code with the Nuggets App</li>
               <li style={styles.orderedListItem}>Review details in Nuggets App</li>
               <li style={styles.orderedListItem}>Approve share of Name proof in Nuggets App</li>
             </ol>
