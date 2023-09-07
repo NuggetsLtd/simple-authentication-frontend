@@ -70,6 +70,12 @@ const styles = {
     margin: "15px 0 0 0",
     color: "#fff",
     fontFamily: "monospace",
+  },
+  vcHeader: {
+    marginBottom: "15px",
+  },
+  vcItem: {
+    marginLeft: "40px",
   }
 }
 
@@ -160,9 +166,9 @@ const ResponseArea = (props: { reference?: string }) => {
         return response?.verified
           ? (
             <>
-              <div>✅ Proof Verified:</div>
-              <div>   Type: ${response?.VCProof?.type.join(', ')}</div>
-              <div>   Name: <strong>${response?.VCProof?.credentialSubject?.givenName} ${response?.VCProof?.credentialSubject?.familyName}</strong></div>
+              <div style={styles.vcHeader}>✅ Proof Verified:</div>
+              <div style={styles.vcItem}>Type: <strong>{response?.VCProof?.type.join(', ')}</strong></div>
+              <div style={styles.vcItem}>Name: <strong>{response?.VCProof?.credentialSubject?.givenName} {response?.VCProof?.credentialSubject?.familyName}</strong></div>
             </>
           )
           : '❌ Proof Verification Failed'
