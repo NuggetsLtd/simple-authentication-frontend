@@ -130,12 +130,18 @@ const ResponseArea = (props: { reference?: string }) => {
   const [refreshInterval, setRefreshInterval] = useState(0)
 
   if(reference !== ref) {
-    setRef(reference)
+    // stop polling on new ref
+    setRefreshInterval(0)
+
+    // clear responses on new ref
     setResponses([])
+
+    // set new reference
+    setRef(reference)
   }
 
   useEffect(() => {
-    // start polling on new ref
+    // start polling again on new ref
     setRefreshInterval(500)
   }, [ref])
 
