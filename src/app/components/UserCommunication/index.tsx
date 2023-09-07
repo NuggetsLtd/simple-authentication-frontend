@@ -162,6 +162,13 @@ const ResponseArea = (props: { reference?: string }) => {
 
   const responseMessage: Function = (response: CommsStatus) => {
     switch (response?.status) {
+      case 'DATA_REQUESTED':
+        return (
+          <>
+            <div>🤝 Connected with User</div>
+            <div>➡️ Name Proof Requested</div>
+          </>
+        )
       case 'COMPLETE':
         return response?.verified
           ? (
