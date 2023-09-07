@@ -133,7 +133,7 @@ const ResponseArea = (props: { reference?: string }) => {
     setResponses([...responses, data])
   }
 
-  return <ul>{responses.map((response, index) => <li key={index}>{response}</li>)}</ul>
+  return <ul>{responses.map((response, index) => <li key={index}>{response?.status}</li>)}</ul>
 }
 
 export default function UserCommunication () {
