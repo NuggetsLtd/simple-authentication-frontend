@@ -1,7 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import '../helpers/cache'
+import cache from '../helpers/cache'
 
 const styles = {
   html: {
@@ -22,6 +22,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  cache.set('foo', 'bar')
+  console.log({ foo: cache.get('foo') })
+
   return (
     <html lang="en" style={styles.html}>
       <head>

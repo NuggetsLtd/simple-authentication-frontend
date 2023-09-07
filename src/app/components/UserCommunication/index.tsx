@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import useSWR from 'swr'
 
 const fetcher = (...args) => fetch(...args).then(res => res.json())
@@ -86,8 +86,8 @@ const statusMap = {
   COMPLETE: '✅ Proof Verified',
 }
 
-const InviteForm = (props: { handleInvite: Function }) => {
-  const { handleInvite } = props
+const InviteForm = (props: { handleGenerateInvite: Function }) => {
+  const { handleGenerateInvite } = props
   const [isHover, setIsHover] = useState(false)
 
   const handleMouseEnter = () => setIsHover(true)
@@ -95,7 +95,7 @@ const InviteForm = (props: { handleInvite: Function }) => {
 
   return <button
       style={isHover ? { ...styles.button, ...styles.buttonHover } : styles.button}
-      onClick={() => handleInvite('auth')}
+      onClick={() => handleGenerateInvite('auth')}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >Generate Invite</button>
@@ -112,12 +112,12 @@ const Invite = (props: { invite: CommsInvite, inviteTimedOut: boolean}) => {
   return <a href={invite?.data?.deeplink} style={styles.container} dangerouslySetInnerHTML={{ __html: invite?.data?.qrCode || "" }}></a>
 }
 
-const InviteContainer = (props: { invite: CommsInvite, inviteTimedOut: boolean, handleInvite: Function }) => {
-  const { invite, inviteTimedOut, handleInvite } = props
+const InviteContainer = (props: { invite: CommsInvite, inviteTimedOut: boolean, handleGenerateInvite: Function }) => {
+  const { invite, inviteTimedOut, handleGenerateInvite } = props
 
   return (
     <>
-      <InviteForm handleInvite={handleInvite} />
+      <InviteForm handleGenerateInvite={handleGenerateInvite} />
       <Invite invite={invite} inviteTimedOut={inviteTimedOut} />
     </>
   )
@@ -126,40 +126,21 @@ const InviteContainer = (props: { invite: CommsInvite, inviteTimedOut: boolean, 
 const ResponseArea = (props: { reference?: string }) => {
   const { reference } = props
   const [responses, setResponses] = useState([])
-  const [ref, setRef] = useState()
-  const [refreshInterval, setRefreshInterval] = useState(0)
+  const [refreshInterval, setRefreshInterval] = useState(500)
 
-  if(reference !== ref) {
-    // stop polling on new ref
-    setRefreshInterval(0)
-
-    // clear responses on new ref
-    setResponses([])
-
-    // set new reference
-    setRef(reference)
-  }
-
-  useEffect(() => {
-    // start polling again on new ref
-    setRefreshInterval(500)
-  }, [ref])
-
-  const { data, error } = useSWR('/api/invite-status', url => fetcher(url, {
+  const { data, error, isLoading, isValidating } = useSWR(reference, ref => fetcher('/api/invite-status', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ ref })
-  }), { refreshInterval, revalidateIfStale: false, revalidateOnMount: false, revalidateOnFocus: false, revalidateOnReconnect: false })
+  }), { refreshInterval, revalidateOnMount: true, keepPreviousData: false, revalidateIfStale: true })
 
   if (data?.error) return <div>ERROR: {data.error}</div>
   if (error) return <div>ERROR: {error}</div>
-  if (ref && !data) return <div>loading...</div>
-  
-  console.log({ status: data?.status, responses })
+  if (reference && !data) return <div>loading...</div>
 
-  if(ref && !responses.length) {
+  if(reference && !responses.length) {
     setResponses([{ status: 'PENDING' }])
   } else if (responses.length && data?.status !== responses[responses.length - 1]?.status) {
     setResponses([...responses, data])
@@ -200,10 +181,12 @@ export default function UserCommunication () {
   const [invite, setInvite] = useState(defaultInvite)
   const [inviteTimedOut, setInviteTimedOut] = useState(false)
   const [isPolling, setIsPolling] = useState(false)
+  const [timeoutRef, setTimeoutRef] = useState()
   
-  const handleInvite = (reason: string) => {
+  const handleGenerateInvite = (reason: string) => {
     setInvite({ isLoading: true, error: null, data: null })
     setInviteTimedOut(false)
+    timeoutRef && clearTimeout(timeoutRef)
     setIsPolling(false)
 
     fetch(`/api/invite?reason=${reason}`)
@@ -217,27 +200,27 @@ export default function UserCommunication () {
       })
   }
 
-  if(!isPolling) {
+  if(!isPolling && invite?.data) {
     // log deeplink to console & ref for testing
     console.log({ deeplink: invite?.data?.deeplink, ref: invite?.data?.ref })
     
     // prevent further timeouts happening wen we're already polling
     setIsPolling(true)
 
-    // set timeout running for invite
-    setTimeout(() => setInviteTimedOut(true), TIMEOUT_MS)
+    // set timeout running for invite & store ref
+    setTimeoutRef(
+      setTimeout(() => setInviteTimedOut(true), TIMEOUT_MS)
+    )
   }
-
-  // TODO: poll for updates to session cache
 
   return (
     <>
       <InviteContainer
         invite={invite}
         inviteTimedOut={inviteTimedOut}
-        handleInvite={handleInvite}
+        handleGenerateInvite={handleGenerateInvite}
       />
-      <ResponseArea reference={invite?.data?.ref} />
+      {isPolling && <ResponseArea reference={invite?.data?.ref} />}
     </>
   )
 }

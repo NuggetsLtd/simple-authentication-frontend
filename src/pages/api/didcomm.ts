@@ -15,11 +15,10 @@ const reasons = {
 }
 
 export default async function handler(req, res) {
-  console.log('> didcomm', req.body)
-
   const authHeader = req?.headers?.authorization
   const msg = req?.body?.msg
-
+  
+  console.log('> didcomm', msg?.thid)
 
   if (!authHeader) {
     return res.status(401).json({ error: 'Token required' })
@@ -120,7 +119,7 @@ const handleConnection = async (res, msg) => {
 }
 
 const handleBasicMessage = async (res, msg) => {
-  console.log('> didcomm: handleBasicMessage', msg?.body)
+  console.log('> didcomm: handleBasicMessage', msg?.thid)
 
   const VCProof = msg?.body?.authenticationOutcome?.userData?.identityVCProof
 
@@ -163,7 +162,7 @@ const handleBasicMessage = async (res, msg) => {
     verified
   }, 60 * 5)
 
-  console.log('< didcomm: handleBasicMessage', verified)
+  console.log('< didcomm: handleBasicMessage', msg?.thid)
 
   return res.status(200).json("OK")
 }

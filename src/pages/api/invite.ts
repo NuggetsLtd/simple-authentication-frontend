@@ -14,6 +14,7 @@ const reasons = {
 
 export default async function handler(req, res) {
   console.log('> generate invite')
+  
   // check for valid reason
   const reason = reasons[req?.query?.reason]
 
@@ -31,8 +32,6 @@ export default async function handler(req, res) {
       "format": "svg",
     })
   })
-  // The return value is *not* serialized
-  // You can return Date, Map, Set, etc.
  
   if (!response.ok) {
     // This will activate the closest `error.js` Error Boundary
@@ -42,9 +41,8 @@ export default async function handler(req, res) {
   const data = await response.json()
  
   // store invite reason in cache for 5 minutes
-  await cache.set(`invite_${data.ref}`, reason, 60 * 5)
-
-  console.log('< generate invite', `invite_${data.ref}`)
+  cache.set(`invite_${data.ref}`, reason, 60 * 5)
+  console.log('< generate invite')
 
   return res.status(200).json(data);
 }
