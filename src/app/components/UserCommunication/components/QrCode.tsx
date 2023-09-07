@@ -53,9 +53,10 @@ export default function QrCode (props: object) {
   if (inviteTimedOut) return <div style={styles.container}>Invite timed out</div>
   if (invite?.error) return <div style={styles.container}>{invite?.error}</div>
 
-  console.log({ deeplink: invite?.data?.deeplink, ref: invite?.data?.ref })
-
   if(!isPolling) {
+
+    console.log({ deeplink: invite?.data?.deeplink, ref: invite?.data?.ref })
+    
     // prevent further timeouts happening wen we're already polling
     setIsPolling(true)
 
