@@ -132,10 +132,12 @@ const ResponseArea = (props: { reference?: string }) => {
   if(reference !== ref) {
     setRef(reference)
     setResponses([])
+  }
 
+  useEffect(() => {
     // start polling on new ref
     setRefreshInterval(500)
-  }
+  }, [ref])
 
   const { data, error } = useSWR('/api/invite-status', url => fetcher(url, {
     method: 'POST',
