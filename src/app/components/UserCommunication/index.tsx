@@ -161,7 +161,7 @@ const ResponseArea = (props: { reference?: string }) => {
           ? `✅ Proof Verified:
 
   Type: ${response?.VCProof?.type.join(', ')}
-  Name: ${response?.VCProof?.credentialSubject?.givenName} ${response?.VCProof?.credentialSubject?.familyName}
+  Name: <strong>${response?.VCProof?.credentialSubject?.givenName} ${response?.VCProof?.credentialSubject?.familyName}</strong>
 `
           : '❌ Proof Verification Failed'
       default:
