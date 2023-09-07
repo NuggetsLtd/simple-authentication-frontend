@@ -147,14 +147,29 @@ const ResponseArea = (props: { reference?: string }) => {
 
   if(ref && !responses.length) {
     setResponses([{ status: 'PENDING' }])
-  } else if (data?.status !== responses[responses.length - 1]?.status) {
+  } else if (responses.length && data?.status !== responses[responses.length - 1]?.status) {
     setResponses([...responses, data])
   }
 
   // stop polling once we've got a complete response
   if (refreshInterval !== 0 &&  data?.status === 'COMPLETE') setRefreshInterval(0)
 
-  return <ul style={styles.responseList}>{responses.map((response, index) => <li key={index}>{statusMap[response?.status]}</li>)}</ul>
+  const responseMessage: Function = (response: CommsStatus) => {
+    switch (response?.status) {
+      case 'COMPLETE':
+        return response?.verified
+          ? `✅ Proof Verified:
+
+  Type: ${response?.VCProof?.type.join(', ')}
+  Name: ${response?.VCProof?.credentialSubject?.givenName} ${response?.VCProof?.credentialSubject?.familyName}
+`
+          : '❌ Proof Verification Failed'
+      default:
+        return statusMap[response?.status]
+    }
+  }
+
+  return <ul style={styles.responseList}>{responses.map((response, index) => <li key={index}>{responseMessage(response)}</li>)}</ul>
 }
 
 export default function UserCommunication () {
