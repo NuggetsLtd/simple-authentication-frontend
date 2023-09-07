@@ -16,10 +16,24 @@ const styles = {
     gap: "30px",
   },
   contentAside: {
-    flexGrow: 1,
+    flexGrow: 0,
+    flexBasis: "300px",
+    color: "#fff",
+  },
+  asideHeader: {
+    marginBottom: "15px",
+    fontWeight: 700,
+  },
+  orderedList: {
+    listStyle: "decimal outside",
+    marginLeft: "15px",
+    lineHeight: "1.3em",
+  },
+  orderedListItem: {
+    marginBottom: "9px",
   },
   contentBlock: {
-    flexGrow: 3,
+    flexGrow: 1,
     border: "solid 1px rgba(255, 255, 255, 0.46)",
     borderRadius: "12px",
     backgroundColor: "rgba(18, 3, 31, 0.1)",
@@ -37,9 +51,15 @@ export default async function Home() {
         <InstallNuggetsBanner />
         <div style={styles.contentContainer}>
           <aside style={{ ...styles.contentBlock, ...styles.contentAside }}>
-            {/* <h1 style={styles.newToNuggets.header}>New to Nuggets?</h1>
-            <p>Download for your device</p> */}
-            ASIDE
+            <h1 style={styles.asideHeader}>Instructions</h1>
+            <ol style={styles.orderedList}>
+              <li style={styles.orderedListItem}>Install the Nuggets app on your phone</li>
+              <li style={styles.orderedListItem}>Open the app and create an account</li>
+              <li style={styles.orderedListItem}>Click on the &quot;Generate Invite&quot; button</li>
+              <li style={styles.orderedListItem}>Scan the QR code with the Nuggets App</li>
+              <li style={styles.orderedListItem}>Review details in Nuggets App</li>
+              <li style={styles.orderedListItem}>Approve share of Name proof in Nuggets App</li>
+            </ol>
           </aside>
           <section style={styles.contentBlock}>
             <UserCommunication />
