@@ -66,6 +66,13 @@ const styles = {
   },
 }
 
+const statusMap = {
+  PENDING: '⏳ Awaiting User Connection',
+  DATA_REQUESTED: '➡️ Name Proof Requested from User',
+  VC_RECEIVED: '⬅️ Name Proof Received',
+  COMPLETE: '✅ Proof Verified',
+}
+
 const InviteForm = (props: { handleInvite: Function }) => {
   const { handleInvite } = props
   const [isHover, setIsHover] = useState(false)
@@ -128,12 +135,12 @@ const ResponseArea = (props: { reference?: string }) => {
   console.log({ status: data?.status, responses })
 
   if(ref && !responses.length) {
-    setResponses([data])
+    setResponses([{ status: 'PENDING' }])
   } else if (data?.status !== responses[responses.length - 1]?.status) {
     setResponses([...responses, data])
   }
 
-  return <ul>{responses.map((response, index) => <li key={index}>{response?.status}</li>)}</ul>
+  return <ul>{responses.map((response, index) => <li key={index}>{statusMap[response?.status]}</li>)}</ul>
 }
 
 export default function UserCommunication () {
