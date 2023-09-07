@@ -21,6 +21,13 @@ const defaultInvite: CommsInvite = {
   error: null,
   data: null,
 }
+interface CommsStatus {
+  readonly status: string;
+  readonly VCProofNonce?: string;
+  readonly VCProof?: object;
+  readonly verified?: boolean;
+}
+
 
 const styles = {
   container: {
@@ -98,33 +105,46 @@ const InviteContainer = (props: { invite: CommsInvite, inviteTimedOut: boolean, 
 
 const ResponseArea = (props: { reference?: string }) => {
   const { reference } = props
+  const [responses, setResponses] = useState([])
+  const [ref, setRef] = useState()
+
+  if(reference !== ref) {
+    setRef(reference)
+    setResponses([])
+  }
+
   const { data, error } = useSWR('/api/invite-status', url => fetcher(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ ref: reference })
+    body: JSON.stringify({ ref })
   }), { refreshInterval: 1000 })
 
   if (data?.error) return <div>ERROR: {data.error}</div>
   if (error) return <div>ERROR: {error}</div>
+  if (ref && !data) return <div>loading...</div>
+  
+  console.log({ status: data?.status, responses })
 
-  return <div>REQUEST AREA</div>
+  if(ref && !responses.length) {
+    setResponses([data])
+  } else if (data?.status !== responses[responses.length - 1]?.status) {
+    setResponses([...responses, data])
+  }
+
+  return <ul>{responses.map((response, index) => <li key={index}>{response}</li>)}</ul>
 }
 
 export default function UserCommunication () {
   const [invite, setInvite] = useState(defaultInvite)
   const [inviteTimedOut, setInviteTimedOut] = useState(false)
   const [isPolling, setIsPolling] = useState(false)
-  const [responses, setResponses] = useState([])
-
-  // const { data, error, isLoading } = useSWR('/api/invite', url => fetcher(`${url}?reason=${props?.reason}`))
-  // fetch(`/api/invite?reason=${props?.reason}`, { method: 'GET' })
-  //   .then(response => setInvite(response))
-  //   .catch(error => setInvite({ isLoading: false, error, data: null }))
   
   const handleInvite = (reason: string) => {
     setInvite({ isLoading: true, error: null, data: null })
+    setInviteTimedOut(false)
+    setIsPolling(false)
 
     fetch(`/api/invite?reason=${reason}`)
       // handle fetch response
@@ -136,11 +156,6 @@ export default function UserCommunication () {
           : setInvite({ isLoading: false, error: 'Invite create failed', data: null })
       })
   }
-
-  useEffect(() => {
-    // clear response area on invite change
-    setResponses([])
-  }, [invite])
 
   if(!isPolling) {
     // log deeplink to console & ref for testing
