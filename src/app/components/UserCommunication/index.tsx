@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import useSWR from 'swr'
 
-const fetcher = (...args) => fetch(...args).then(res => res.json())
+const fetcher = (url: string, options: object) => fetch(url, options).then(res => res.json())
 const TIMEOUT_MS = 1000 * 60 * 4
 
 interface CommsInvite {
@@ -24,10 +24,17 @@ const defaultInvite: CommsInvite = {
 interface CommsStatus {
   readonly status: string;
   readonly VCProofNonce?: string;
-  readonly VCProof?: object;
+  readonly VCProof?: {
+    readonly type: string[];
+    readonly credentialSubject: {
+      readonly givenName: string;
+      readonly familyName: string;
+    };
+  };
   readonly verified?: boolean;
 }
 
+const defaultCommsStatus: CommsStatus[] = []
 
 const styles = {
   container: {
@@ -53,8 +60,8 @@ const styles = {
     fontSize: "16px",
     fontWeight: 700,
     borderRadius: "4px",
-    textAlign: "center",
-    textTransform: "uppercase",
+    textAlign: "center" as "center",
+    textTransform: "uppercase" as "uppercase",
     padding: "14px 26px",
     outline: "none",
     border: "none",
@@ -125,7 +132,7 @@ const InviteContainer = (props: { invite: CommsInvite, inviteTimedOut: boolean, 
 
 const ResponseArea = (props: { reference?: string }) => {
   const { reference } = props
-  const [responses, setResponses] = useState([])
+  const [responses, setResponses] = useState(defaultCommsStatus)
   const [refreshInterval, setRefreshInterval] = useState(500)
 
   const { data, error, isLoading, isValidating } = useSWR(reference, ref => fetcher('/api/invite-status', {
@@ -169,8 +176,10 @@ const ResponseArea = (props: { reference?: string }) => {
             </>
           )
           : '❌ Proof Verification Failed'
-      default:
-        return statusMap[response?.status]
+      case 'PENDING':
+        return statusMap.PENDING
+      case 'VC_RECEIVED':
+        return statusMap.VC_RECEIVED
     }
   }
 
@@ -181,7 +190,7 @@ export default function UserCommunication () {
   const [invite, setInvite] = useState(defaultInvite)
   const [inviteTimedOut, setInviteTimedOut] = useState(false)
   const [isPolling, setIsPolling] = useState(false)
-  const [timeoutRef, setTimeoutRef] = useState()
+  const [timeoutRef, setTimeoutRef] = useState<any|null>(null)
   
   const handleGenerateInvite = (reason: string) => {
     setInvite({ isLoading: true, error: null, data: null })
@@ -208,6 +217,7 @@ export default function UserCommunication () {
     setIsPolling(true)
 
     // set timeout running for invite & store ref
+    
     setTimeoutRef(
       setTimeout(() => setInviteTimedOut(true), TIMEOUT_MS)
     )
