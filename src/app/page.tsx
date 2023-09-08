@@ -51,7 +51,7 @@ export default async function Home() {
         <InstallNuggetsBanner />
         <div style={styles.contentContainer}>
           <aside style={{ ...styles.contentBlock, ...styles.contentAside }}>
-            <h1 style={styles.asideHeader}>Instructions</h1>
+            <h1 style={styles.asideHeader}>Instructions:</h1>
             <ol style={styles.orderedList}>
               <li style={styles.orderedListItem}>Install the Nuggets app on your phone</li>
               <li style={styles.orderedListItem}>Open the app and create an account</li>
