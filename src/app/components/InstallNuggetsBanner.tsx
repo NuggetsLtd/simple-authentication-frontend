@@ -5,7 +5,7 @@ const styles = {
   bannerHolder: {
     fontSize: "16px",
     fontWeight: 700,
-    textAlign: "center",
+    textAlign: "center" as "center",
     color: "#4a4a4a",
     padding: "24px 20px 22px",
     borderRadius: "8px",

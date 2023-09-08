@@ -3,7 +3,6 @@ import Image from 'next/image'
 const styles = {
   header: {
     width: "100%",
-    position: "relative",
     zIndex: 9999,
     display: "block",
     borderBottom: "solid 1px rgba(255, 255, 255, 0.1)",
@@ -17,9 +16,9 @@ const styles = {
   headerText: {
     fontSize: "18px",
     fontWeight: 300,
-    float: "right",
     lineHeight: "37.5px",
     color: "#fff",
+    float: "right" as "right",
   },
 }
 
