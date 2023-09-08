@@ -1,6 +1,13 @@
 import dotEnv from 'dotenv'
 import { randomBytes } from 'crypto'
 import cache from '../../helpers/cache'
+import type {
+  Request,
+  Response,
+  DIDCommMsg,
+  CachedSession,
+} from "./types"
+const TIMEOUT_MS = 60 * 5
 
 // load env vars from .env file
 dotEnv.config()
@@ -14,9 +21,9 @@ const reasons = {
   auth: 'auth'
 }
 
-export default async function handler(req, res) {
+export default async function handler(req: Request, res: Response) {
   const authHeader = req?.headers?.authorization
-  const msg = req?.body?.msg
+  const msg: DIDCommMsg = req?.body?.msg
   
   console.log('> didcomm', msg?.thid)
 
@@ -45,7 +52,7 @@ export default async function handler(req, res) {
   }
 }
 
-const handleConnection = async (res, msg) => {
+const handleConnection = async (res: Response, msg: DIDCommMsg) => {
   console.log('> didcomm: handleConnection', `invite_${msg.thid}`)
 
   // check for matching cached invite
@@ -64,7 +71,7 @@ const handleConnection = async (res, msg) => {
     return res.status(404).json({ error: 'Invite Type Not Found' })
   }
 
-  await cache.set(`session_${msg.thid}`, { status: 'CONNECTED' }, 60 * 5)
+  await cache.set(`session_${msg.thid}`, { status: 'CONNECTED' }, TIMEOUT_MS)
 
   // convert reference string to 32 byte padded hex
   const paddedReference = `0x${Buffer.from(msg.thid, 'ascii').toString('hex').padEnd(64, '0')}`
@@ -109,8 +116,8 @@ const handleConnection = async (res, msg) => {
 
   // store session reason in cache for 5 minutes
   await Promise.all([
-    cache.set(`session_${msg.thid}`, { status: 'DATA_REQUESTED', VCProofNonce }, 60 * 5),
-    cache.set(`invite_${msg.thid}`, INVITE_PROCESSED, 60 * 5)
+    cache.set(`session_${msg.thid}`, { status: 'DATA_REQUESTED', VCProofNonce }, TIMEOUT_MS),
+    cache.set(`invite_${msg.thid}`, INVITE_PROCESSED, TIMEOUT_MS)
   ])
 
   console.log('< didcomm: handleConnection')
@@ -118,13 +125,13 @@ const handleConnection = async (res, msg) => {
   return res.status(200).json("OK")
 }
 
-const handleBasicMessage = async (res, msg) => {
+const handleBasicMessage = async (res: Response, msg: DIDCommMsg) => {
   console.log('> didcomm: handleBasicMessage', msg?.thid)
 
   const VCProof = msg?.body?.authenticationOutcome?.userData?.identityVCProof
 
   // retrieve nonce from session cache
-  const cachedSession = await cache.get(`session_${msg.thid}`)
+  const cachedSession: CachedSession | undefined = await cache.get(`session_${msg.thid}`)
 
   if (!cachedSession) {
     return res.status(404).json({ error: 'Session Not Found' })
@@ -137,7 +144,7 @@ const handleBasicMessage = async (res, msg) => {
     status: 'VC_RECEIVED',
     VCProofNonce: nonce,
     VCProof,
-  }, 60 * 5)
+  }, TIMEOUT_MS)
 
   // verify vc proof with nonce
   const response = await fetch(`${communicatorProtocol}://${communicatorHost}:${communicatorPort}/account/verify-proof`, {
@@ -160,7 +167,7 @@ const handleBasicMessage = async (res, msg) => {
     VCProofNonce: nonce,
     VCProof,
     verified
-  }, 60 * 5)
+  }, TIMEOUT_MS)
 
   console.log('< didcomm: handleBasicMessage', msg?.thid)
 

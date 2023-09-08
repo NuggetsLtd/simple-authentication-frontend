@@ -1,6 +1,10 @@
 import cache from '../../helpers/cache'
+import type {
+  Request,
+  Response,
+} from "./types"
 
-export default async function handler(req, res) {
+export default async function handler(req: Request, res: Response) {
   const ref = req?.body?.ref
   console.log('> invite-status', ref)
 

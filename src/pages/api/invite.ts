@@ -1,5 +1,12 @@
 import dotEnv from 'dotenv'
 import cache from '../../helpers/cache'
+import type {
+  Request,
+  Response,
+  DIDCommMsg,
+  CachedSession,
+} from "./types"
+import { string } from 'prop-types'
 
 // load env vars from .env file
 dotEnv.config()
@@ -12,11 +19,13 @@ const reasons = {
   auth: 'auth'
 }
 
-export default async function handler(req, res) {
+export default async function handler(req: Request, res: Response) {
   console.log('> generate invite')
   
   // check for valid reason
-  const reason = reasons[req?.query?.reason]
+  const reason: string | null = reasons.auth === req?.query?.reason
+    ? req?.query?.reason  
+    : null
 
   if (!reason) {
     return res.status(400).json({ error: 'Invalid reason' })
