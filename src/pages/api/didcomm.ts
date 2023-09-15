@@ -250,7 +250,7 @@ const handleBasicMessage = async (res: Response, msg: DIDCommMsg) => {
     VCProofNonce: nonce,
     VCProof,
     verified,
-    adUserFound: !!username,
+    adUser,
     mfaCode,
   }, TIMEOUT_MS)
 
