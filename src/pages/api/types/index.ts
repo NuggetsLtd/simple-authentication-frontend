@@ -5,7 +5,13 @@ export interface DIDCommMsg {
   readonly body: {
     readonly authenticationOutcome?: {
       readonly userData?: {
-        readonly identityVCProof?: string;
+        readonly identityVCProof?: {
+          readonly type: string;
+          readonly credentialSubject: {
+            readonly givenName?: string;
+            readonly familyName?: string;
+          }
+        };
       };
     };
   };
