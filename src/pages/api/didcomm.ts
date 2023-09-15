@@ -55,7 +55,7 @@ const findADUser = async (givenName?: string, familyName?: string): Promise<AdUs
 
 const getDuoMFA = async (username: string) => {
   const user = await new Promise((resolve, reject) => {
-    duo.jsonApiCall('GET', `/admin/v1/users?username=${username}`, (err: any, res: any) => err ? reject(err) : resolve(res))
+    duo.jsonApiCall('GET', `/admin/v1/users`, { username }, (err: any, res: any) => err ? reject(err) : resolve(res))
   })
 
   console.log('>>> DUO USER', user)
