@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import useSWR from 'swr'
-import hljs from "highlight.js"
 
 const fetcher = (url: string, options: object) => fetch(url, options).then(res => res.json())
 const TIMEOUT_MS = 1000 * 60 * 4
@@ -177,7 +176,16 @@ const ResponseArea = (props: { reference?: string }) => {
               <div style={styles.vcItem}>Type: <strong>{response?.VCProof?.type.join(', ')}</strong></div>
               <div style={styles.vcItem}>Name: <strong>{response?.VCProof?.credentialSubject?.givenName} {response?.VCProof?.credentialSubject?.familyName}</strong></div>
               <div style={styles.vcItem}>AD User Match: 
-                {response?.adUser ? <pre><code className="language-json">{JSON.stringify(response?.adUser)}</code></pre> : '❌'}
+                {response?.adUser ? (
+                  <table>
+                    {Object.keys(response?.adUser).map((key, index) => (
+                      <tr key={index}>
+                        <td>{key}</td>
+                        <td><strong>{response?.adUser[key]}</strong></td>
+                      </tr>
+                    ))}
+                  </table>
+                ) : '❌'}
               </div>
               <div style={styles.vcItem}>MFA Code: <strong>{response?.mfaCode}</strong></div>
             </>
@@ -189,6 +197,20 @@ const ResponseArea = (props: { reference?: string }) => {
         return statusMap.VC_RECEIVED
     }
   }
+    // >>> AD USER User {
+    //   dn: 'CN=ANDREW MICHAEL LORD,OU=Users,OU=ad-demo,DC=ad-demo,DC=nuggets,DC=network',
+    //   distinguishedName: 'CN=ANDREW MICHAEL LORD,OU=Users,OU=ad-demo,DC=ad-demo,DC=nuggets,DC=network',
+    //   userPrincipalName: 'andrew@AD-DEMO.NUGGETS.NETWORK',
+    //   sAMAccountName: 'andrew',
+    //   mail: 'andrew.lord@nuggets.life',
+    //   whenCreated: '20230914103831.0Z',
+    //   pwdLastSet: '133391631367207965',
+    //   userAccountControl: '512',
+    //   sn: 'LORD',
+    //   givenName: 'ANDREW MICHAEL',
+    //   cn: 'ANDREW MICHAEL LORD',
+    //   displayName: 'ANDREW MICHAEL LORD'
+    // }
 
   return <ul style={styles.responseList}>{responses.map((response, index) => <li key={index}>{responseMessage(response, responses[index-1]?.status)}</li>)}</ul>
 }
@@ -198,11 +220,6 @@ export default function UserCommunication () {
   const [inviteTimedOut, setInviteTimedOut] = useState(false)
   const [isPolling, setIsPolling] = useState(false)
   const [timeoutRef, setTimeoutRef] = useState<any|null>(null)
-  
-  // highlight code blocks
-  useEffect(() => {
-    hljs.highlightAll();
-  }, []);
   
   const handleGenerateInvite = (reason: string) => {
     setInvite({ isLoading: true, error: null, data: null })

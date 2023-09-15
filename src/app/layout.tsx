@@ -1,5 +1,4 @@
 import './globals.css'
-import "highlight.js/styles/github.css"
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 
