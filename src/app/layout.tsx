@@ -11,8 +11,6 @@ const styles = {
     backgroundImage: `url(${bg.src})`,
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
-    width: '100%',
-    height: '100%',
   }
 }
 
