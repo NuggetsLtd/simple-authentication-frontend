@@ -6,8 +6,10 @@ import type {
   Response,
   DIDCommMsg,
   CachedSession,
+  AdUser,
 } from "./types"
 import ActiveDirectory from 'activedirectory2'
+import DuoApi from '@duosecurity/duo_api'
 
 // load env vars from .env file
 dotEnv.config()
@@ -27,8 +29,14 @@ const adConfig = {
   username: process.env.AD_USERNAME,
   password: process.env.AD_PASSWORD,
 }
+const duoConfig = {
+  host: process.env.DUO_HOST,
+  ikey: process.env.DUO_IKEY,
+  skey: process.env.DUO_SKEY,
+}
 
 const ad = new ActiveDirectory(adConfig);
+const duo = new DuoApi.Client(duoConfig.ikey, duoConfig.skey, duoConfig.host);
 
 const findADUser = async (givenName?: string, familyName?: string): Promise<AdUser | undefined> => {
   if (!givenName || !familyName) {
@@ -43,6 +51,40 @@ const findADUser = async (givenName?: string, familyName?: string): Promise<AdUs
       resolve(user)
     })
   })
+}
+
+const getDuoMFA = async (username: string) => {
+  const user = await new Promise((resolve, reject) => {
+    duo.jsonApiCall('GET', `/admin/v1/users?username=${username}`, (err: any, res: any) => err ? reject(err) : resolve(res))
+  })
+
+  console.log('>>> DUO USER', user)
+
+  if (!user) {
+    return Promise.reject("User not found")
+  }
+
+  // TODO: get user_id from user object
+  const user_id = 'USER_ID'
+
+  const mfaResponse = await new Promise((resolve, reject) => {
+    duo.jsonApiCall(
+      'POST',
+      `/admin/v1/users/${user_id}/bypass_codes`,
+      {
+        valid_secs: 60 * 5, // valid for 5 minutes
+        reuse_count: 3, // can be reused 3 times (in case of incorrect password entry, etc...)
+        preserve_existing: false, // remove any existing bypass codes
+        count: 1 // generate 1 bypass code
+      },
+      (err: any, res: any) => err ? reject(err) : resolve(res)
+    )
+  })
+
+  console.log('>>> DUO MFA', mfaResponse)
+
+  // TODO: return bypass code for user
+  return Promise.resolve('MFA_CODE')
 }
 
 export default async function handler(req: Request, res: Response) {
@@ -194,7 +236,10 @@ const handleBasicMessage = async (res: Response, msg: DIDCommMsg) => {
 
   const username = adUser?.sAMAccountName
 
-  // TODO: generate MFA code and send to user
+  // generate MFA code and send to user
+  const mfaCode = username
+    ? await getDuoMFA(username)
+    : null
 
   // store session in cache
   await cache.set(`session_${msg.thid}`, {
@@ -202,7 +247,8 @@ const handleBasicMessage = async (res: Response, msg: DIDCommMsg) => {
     VCProofNonce: nonce,
     VCProof,
     verified,
-    adUserFound: !!username
+    adUserFound: !!username,
+    mfaCode,
   }, TIMEOUT_MS)
 
   console.log('< didcomm: handleBasicMessage', msg?.thid)
