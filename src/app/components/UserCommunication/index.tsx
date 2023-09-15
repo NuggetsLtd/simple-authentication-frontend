@@ -33,6 +33,7 @@ interface CommsStatus {
   };
   readonly verified?: boolean;
   readonly adUserFound?: boolean;
+  readonly mfaCode?: string;
 }
 
 const defaultCommsStatus: CommsStatus[] = []
@@ -175,6 +176,7 @@ const ResponseArea = (props: { reference?: string }) => {
               <div style={styles.vcItem}>Type: <strong>{response?.VCProof?.type.join(', ')}</strong></div>
               <div style={styles.vcItem}>Name: <strong>{response?.VCProof?.credentialSubject?.givenName} {response?.VCProof?.credentialSubject?.familyName}</strong></div>
               <div style={styles.vcItem}>AD User Match: <strong>{response?.adUserFound ? 'Y' : 'N'}</strong></div>
+              <div style={styles.vcItem}>MFA Code: <strong>{response?.mfaCode}</strong></div>
             </>
           )
           : '❌ Proof Verification Failed'
