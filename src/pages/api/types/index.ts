@@ -41,3 +41,18 @@ export interface CachedSession {
   readonly VCProof?: object;
   readonly verified?: boolean;
 }
+
+export interface AdUser {
+  readonly dn: string;
+  readonly distinguishedName: string;
+  readonly userPrincipalName: string;
+  readonly sAMAccountName: string;
+  readonly mail: string;
+  readonly whenCreated: string;
+  readonly pwdLastSet: string;
+  readonly userAccountControl: string;
+  readonly sn: string;
+  readonly givenName: string;
+  readonly cn: string;
+  readonly displayName: string;
+}
