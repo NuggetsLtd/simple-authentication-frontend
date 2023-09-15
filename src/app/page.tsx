@@ -1,8 +1,6 @@
 import Header from './components/Header'
 import UserCommunication from './components/UserCommunication'
 import InstallNuggetsBanner from './components/InstallNuggetsBanner'
-import Image from 'next/image'
-import Link from 'next/link'
 
 const styles = {
   container: {
@@ -45,7 +43,6 @@ export default async function Home() {
   
   return (
     <main>
-      <Image src="/bg.svg" alt="Nuggets Logo" layout="fill" objectFit='cover' style={styles.background} />
       <Header />
       <div style={styles.container}>
         <InstallNuggetsBanner />

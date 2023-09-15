@@ -1,4 +1,5 @@
 import './globals.css'
+import bg from '../../public/bg.svg'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 
@@ -7,6 +8,11 @@ const styles = {
     minHeight: '100%',
     backgroundColor: '#705e91',
     color: "rgb(74, 74, 74)",
+    backgroundImage: `url(${bg.src})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    width: '100%',
+    height: '100%',
   }
 }
 

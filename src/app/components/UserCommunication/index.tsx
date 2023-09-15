@@ -200,20 +200,6 @@ const ResponseArea = (props: { reference?: string }) => {
         return statusMap.VC_RECEIVED
     }
   }
-    // >>> AD USER User {
-    //   dn: 'CN=ANDREW MICHAEL LORD,OU=Users,OU=ad-demo,DC=ad-demo,DC=nuggets,DC=network',
-    //   distinguishedName: 'CN=ANDREW MICHAEL LORD,OU=Users,OU=ad-demo,DC=ad-demo,DC=nuggets,DC=network',
-    //   userPrincipalName: 'andrew@AD-DEMO.NUGGETS.NETWORK',
-    //   sAMAccountName: 'andrew',
-    //   mail: 'andrew.lord@nuggets.life',
-    //   whenCreated: '20230914103831.0Z',
-    //   pwdLastSet: '133391631367207965',
-    //   userAccountControl: '512',
-    //   sn: 'LORD',
-    //   givenName: 'ANDREW MICHAEL',
-    //   cn: 'ANDREW MICHAEL LORD',
-    //   displayName: 'ANDREW MICHAEL LORD'
-    // }
 
   return <ul style={styles.responseList}>{responses.map((response, index) => <li key={index}>{responseMessage(response, responses[index-1]?.status)}</li>)}</ul>
 }
