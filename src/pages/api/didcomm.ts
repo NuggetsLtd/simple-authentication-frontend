@@ -30,13 +30,13 @@ const adConfig = {
 
 const ad = new ActiveDirectory(adConfig);
 
-const findADUser = (givenName?: string, familyName?: string) => {
+const findADUser = async (givenName?: string, familyName?: string): Promise<AdUser | undefined> => {
   if (!givenName || !familyName) {
     return Promise.reject("Given name and family name required")
   }
 
   return new Promise((resolve, reject) => {
-    ad.findUser(`givenName=${givenName},sn=${familyName},ou=Users,${adConfig.baseDN}`, function(err: any, user: any) {
+    ad.findUser(`CN=${givenName} ${familyName},OU=Users,OU=ad-demo,${adConfig.baseDN}`, function(err: any, user: any) {
       if (err) {
         reject(err)
       }
@@ -192,6 +192,8 @@ const handleBasicMessage = async (res: Response, msg: DIDCommMsg) => {
     })
   console.log('>>> AD USER', adUser)
 
+  const username = adUser?.sAMAccountName
+
   // TODO: generate MFA code and send to user
 
   // store session in cache
@@ -200,7 +202,7 @@ const handleBasicMessage = async (res: Response, msg: DIDCommMsg) => {
     VCProofNonce: nonce,
     VCProof,
     verified,
-    adUserFound: !!adUser
+    adUserFound: !!username
   }, TIMEOUT_MS)
 
   console.log('< didcomm: handleBasicMessage', msg?.thid)
