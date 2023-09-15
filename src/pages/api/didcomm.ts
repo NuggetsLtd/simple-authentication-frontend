@@ -7,11 +7,12 @@ import type {
   DIDCommMsg,
   CachedSession,
 } from "./types"
-const TIMEOUT_MS = 60 * 5
+import ActiveDirectory from 'activedirectory2'
 
 // load env vars from .env file
 dotEnv.config()
 
+const TIMEOUT_MS = 60 * 5
 const apiToken = process.env.WEBHOOK_API_TOKEN
 const communicatorProtocol = process.env.COMMUNICATOR_PROTOCOL
 const communicatorHost = process.env.COMMUNICATOR_HOST
@@ -19,6 +20,29 @@ const communicatorPort = process.env.COMMUNICATOR_PORT
 const INVITE_PROCESSED = 'PROCESSED'
 const reasons = {
   auth: 'auth'
+}
+const adConfig = {
+  url: process.env.AD_URL,
+  baseDN: process.env.AD_BASE_DN,
+  username: process.env.AD_USERNAME,
+  password: process.env.AD_PASSWORD,
+}
+
+const ad = new ActiveDirectory(adConfig);
+
+const findADUser = (givenName?: string, familyName?: string) => {
+  if (!givenName || !familyName) {
+    return Promise.reject("Given name and family name required")
+  }
+
+  return new Promise((resolve, reject) => {
+    ad.findUser(`givenName=${givenName},sn=${familyName},ou=Users,${adConfig.baseDN}`, function(err: any, user: any) {
+      if (err) {
+        reject(err)
+      }
+      resolve(user)
+    })
+  })
 }
 
 export default async function handler(req: Request, res: Response) {
@@ -161,12 +185,22 @@ const handleBasicMessage = async (res: Response, msg: DIDCommMsg) => {
 
   const { verified } = await response.json()
 
+  // check for matching user in Active Directory
+  const adUser = await findADUser(VCProof?.credentialSubject?.givenName, VCProof?.credentialSubject?.familyName)
+    .catch((err) => {
+      console.error('>>> AD MATCH ERROR', err)
+    })
+  console.log('>>> AD USER', adUser)
+
+  // TODO: generate MFA code and send to user
+
   // store session in cache
   await cache.set(`session_${msg.thid}`, {
     status: 'COMPLETE',
     VCProofNonce: nonce,
     VCProof,
-    verified
+    verified,
+    adUserFound: !!adUser
   }, TIMEOUT_MS)
 
   console.log('< didcomm: handleBasicMessage', msg?.thid)
