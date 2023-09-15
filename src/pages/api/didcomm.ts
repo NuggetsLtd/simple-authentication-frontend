@@ -239,6 +239,9 @@ const handleBasicMessage = async (res: Response, msg: DIDCommMsg) => {
   // generate MFA code and send to user
   const mfaCode = username
     ? await getDuoMFA(username)
+              .catch((err) => {
+                console.error('>>> DUO MFA ERROR', err)
+              })
     : null
 
   // store session in cache
