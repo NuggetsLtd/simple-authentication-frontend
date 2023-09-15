@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import useSWR from 'swr'
+import hljs from "highlight.js"
 
 const fetcher = (url: string, options: object) => fetch(url, options).then(res => res.json())
 const TIMEOUT_MS = 1000 * 60 * 4
@@ -32,7 +33,7 @@ interface CommsStatus {
     };
   };
   readonly verified?: boolean;
-  readonly adUserFound?: boolean;
+  readonly adUser?: object;
   readonly mfaCode?: string;
 }
 
@@ -136,6 +137,11 @@ const ResponseArea = (props: { reference?: string }) => {
   const { reference } = props
   const [responses, setResponses] = useState(defaultCommsStatus)
   const [refreshInterval, setRefreshInterval] = useState(500)
+  
+  // highlight code blocks
+  useEffect(() => {
+    hljs.highlightAll();
+  }, []);
 
   const { data, error, isLoading, isValidating } = useSWR(reference, ref => fetcher('/api/invite-status', {
     method: 'POST',
@@ -175,7 +181,9 @@ const ResponseArea = (props: { reference?: string }) => {
               <div style={styles.vcHeader}>{statusMap.COMPLETE}</div>
               <div style={styles.vcItem}>Type: <strong>{response?.VCProof?.type.join(', ')}</strong></div>
               <div style={styles.vcItem}>Name: <strong>{response?.VCProof?.credentialSubject?.givenName} {response?.VCProof?.credentialSubject?.familyName}</strong></div>
-              <div style={styles.vcItem}>AD User Match: <strong>{response?.adUserFound ? 'Y' : 'N'}</strong></div>
+              <div style={styles.vcItem}>AD User Match: 
+                {response?.adUser ? <pre><code className="language-json">{JSON.stringify(response?.adUser)}</code></pre> : '❌'}
+              </div>
               <div style={styles.vcItem}>MFA Code: <strong>{response?.mfaCode}</strong></div>
             </>
           )
