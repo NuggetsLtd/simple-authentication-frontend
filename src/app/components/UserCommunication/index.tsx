@@ -137,11 +137,6 @@ const ResponseArea = (props: { reference?: string }) => {
   const { reference } = props
   const [responses, setResponses] = useState(defaultCommsStatus)
   const [refreshInterval, setRefreshInterval] = useState(500)
-  
-  // highlight code blocks
-  useEffect(() => {
-    hljs.highlightAll();
-  }, []);
 
   const { data, error, isLoading, isValidating } = useSWR(reference, ref => fetcher('/api/invite-status', {
     method: 'POST',
@@ -203,6 +198,11 @@ export default function UserCommunication () {
   const [inviteTimedOut, setInviteTimedOut] = useState(false)
   const [isPolling, setIsPolling] = useState(false)
   const [timeoutRef, setTimeoutRef] = useState<any|null>(null)
+  
+  // highlight code blocks
+  useEffect(() => {
+    hljs.highlightAll();
+  }, []);
   
   const handleGenerateInvite = (reason: string) => {
     setInvite({ isLoading: true, error: null, data: null })
