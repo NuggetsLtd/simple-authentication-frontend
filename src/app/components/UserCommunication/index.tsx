@@ -85,6 +85,9 @@ const styles = {
   },
   vcItem: {
     marginLeft: "40px",
+  },
+  adTable: {
+    margin: "15px 0 15px 40px",
   }
 }
 
@@ -177,7 +180,7 @@ const ResponseArea = (props: { reference?: string }) => {
               <div style={styles.vcItem}>Name: <strong>{response?.VCProof?.credentialSubject?.givenName} {response?.VCProof?.credentialSubject?.familyName}</strong></div>
               <div style={styles.vcItem}>AD User Match: 
                 {response?.adUser ? (
-                  <table>
+                  <table style={styles.adTable}>
                     {Object.keys(response?.adUser).map((key, index) => (
                       <tr key={index}>
                         <td>{key}</td>
