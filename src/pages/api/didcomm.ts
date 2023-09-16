@@ -66,6 +66,7 @@ const getDuoMFA = async (username: string) => {
 
   // TODO: get user_id from user object
   const user_id = user?.response?.user_id
+  console.log('>>> DUO USER ID', user_id)
 
   const mfaResponse = await new Promise((resolve, reject) => {
     duo.jsonApiCall(
