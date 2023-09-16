@@ -55,7 +55,7 @@ const findADUser = async (givenName?: string, familyName?: string): Promise<AdUs
 
 const getDuoMFA = async (username: string) => {
   const user = await new Promise((resolve, reject) => {
-    duo.jsonApiCall('GET', `/admin/v1/users`, { username }, (err: any, res: any) => {
+    duo.jsonApiCall('GET', `/admin/v1/users`, { username }, (res: any, err: any) => {
       console.log('>>> DUO USER RES', { err, res })
       return err ? reject(err) : resolve(res)
     })
@@ -81,7 +81,7 @@ const getDuoMFA = async (username: string) => {
         preserve_existing: false, // remove any existing bypass codes
         count: 1 // generate 1 bypass code
       },
-      (err: any, res: any) => err ? reject(err) : resolve(res)
+      (res: any, err: any) => err ? reject(err) : resolve(res)
     )
   })
 
