@@ -55,23 +55,17 @@ const findADUser = async (givenName?: string, familyName?: string): Promise<AdUs
 
 const getDuoMFA = async (username: string) => {
   const user = await new Promise((resolve, reject) => {
-    duo.jsonApiCall('GET', `/admin/v1/users`, { username }, (res: any, err: any) => {
-      console.log('>>> DUO USER RES', { err, res })
-      return err ? reject(err) : resolve(res)
-    })
+    duo.jsonApiCall('GET', `/admin/v1/users`, { username }, (res: any, err: any) => err ? reject(err) : resolve(res))
   })
-
-  console.log('>>> DUO USER', user)
 
   if (!user) {
     return Promise.reject("User not found")
   }
 
-  // TODO: get user_id from user object
+  // get user_id from user object
   const user_id = user?.response[0]?.user_id
-  console.log('>>> DUO USER ID', user_id)
 
-  const mfaResponse = await new Promise((resolve, reject) => {
+  const bypassCodes = await new Promise((resolve, reject) => {
     duo.jsonApiCall(
       'POST',
       `/admin/v1/users/${user_id}/bypass_codes`,
@@ -85,10 +79,12 @@ const getDuoMFA = async (username: string) => {
     )
   })
 
-  console.log('>>> DUO MFA', mfaResponse)
+  if (!bypassCodes) {
+    return Promise.reject("Bypass code creation failed")
+  }
 
-  // TODO: return bypass code for user
-  return Promise.resolve('MFA_CODE')
+  // return bypass code for user
+  return Promise.resolve(bypassCodes?.response[0])
 }
 
 export default async function handler(req: Request, res: Response) {
