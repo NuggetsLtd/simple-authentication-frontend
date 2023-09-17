@@ -139,6 +139,10 @@ const ResponseArea = (props: { reference?: string }) => {
   const { reference } = props
   const [responses, setResponses] = useState(defaultCommsStatus)
   const [refreshInterval, setRefreshInterval] = useState(500)
+  const [isHover, setIsHover] = useState(false)
+
+  const handleMouseEnter = () => setIsHover(true)
+  const handleMouseLeave = () => setIsHover(false)
 
   const { data, error, isLoading, isValidating } = useSWR(reference, ref => fetcher('/api/invite-status', {
     method: 'POST',
@@ -191,6 +195,14 @@ const ResponseArea = (props: { reference?: string }) => {
                 ) : '❌'}
               </div>
               <div style={styles.vcItem}>MFA Code: <strong>{response?.mfaCode}</strong></div>
+              <div style={styles.vcItem}>
+                <a
+                  style={isHover ? { ...styles.button, ...styles.buttonHover } : styles.button}
+                  href={`workspaces://${response?.adUser?.sAMAccountName}@SLiad+F9RMW4?MFACode=${response?.mfaCode}`} 
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                >Workspace Login &gt;</a>
+              </div>
             </>
           )
           : '❌ Proof Verification Failed'
