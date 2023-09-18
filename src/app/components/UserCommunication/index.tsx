@@ -207,6 +207,9 @@ const ResponseArea = (props: { reference?: string }) => {
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
                 >Workspace Login</a>
+                <script>
+                  window.location.assign('https://duckduckgo.com/')
+                </script>
               </div>
             </>
           )
