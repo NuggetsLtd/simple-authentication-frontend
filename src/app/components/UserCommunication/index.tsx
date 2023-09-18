@@ -142,8 +142,8 @@ const InviteContainer = (props: { invite: CommsInvite, inviteTimedOut: boolean, 
   )
 }
 
-const ResponseArea = (props: { reference?: string }) => {
-  const { reference } = props
+const ResponseArea = (props: { reference?: string, handleStopPolling: Function }) => {
+  const { reference, handleStopPolling } = props
   const [responses, setResponses] = useState(defaultCommsStatus)
   const [refreshInterval, setRefreshInterval] = useState(500)
   const [isHover, setIsHover] = useState(false)
@@ -211,7 +211,11 @@ const ResponseArea = (props: { reference?: string }) => {
   }
 
   if (data?.status === 'COMPLETE' && data?.verified) {
+    // open AWS Workspace client
     window.location.assign(`workspaces://${data?.adUser?.sAMAccountName}@SLiad+F9RMW4?MFACode=${data?.mfaCode}`)
+
+    // stop polling
+    handleStopPolling()
   }
 
   return <ul style={styles.responseList}>{responses.map((response, index) => <li key={index}>{responseMessage(response, responses[index-1]?.status)}</li>)}</ul>
@@ -261,7 +265,7 @@ export default function UserCommunication () {
         inviteTimedOut={inviteTimedOut}
         handleGenerateInvite={handleGenerateInvite}
       />
-      {isPolling && <ResponseArea reference={invite?.data?.ref} />}
+      {isPolling && <ResponseArea reference={invite?.data?.ref} handleStopPolling={() => setIsPolling(false)} />}
     </>
   )
 }
