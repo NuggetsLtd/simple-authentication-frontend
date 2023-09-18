@@ -7,6 +7,8 @@ import type {
   DIDCommMsg,
   CachedSession,
   AdUser,
+  DuoUserResponse,
+  DuoBypassCodesResponse,
 } from "./types"
 import ActiveDirectory from 'activedirectory2'
 import DuoApi from '@duosecurity/duo_api'
@@ -24,15 +26,15 @@ const reasons = {
   auth: 'auth'
 }
 const adConfig = {
-  url: process.env.AD_URL,
-  baseDN: process.env.AD_BASE_DN,
-  username: process.env.AD_USERNAME,
-  password: process.env.AD_PASSWORD,
+  url: process.env.AD_URL || '',
+  baseDN: process.env.AD_BASE_DN || '',
+  username: process.env.AD_USERNAME || '',
+  password: process.env.AD_PASSWORD || '',
 }
 const duoConfig = {
-  host: process.env.DUO_HOST,
-  ikey: process.env.DUO_IKEY,
-  skey: process.env.DUO_SKEY,
+  host: process.env.DUO_HOST || '',
+  ikey: process.env.DUO_IKEY || '',
+  skey: process.env.DUO_SKEY || '',
 }
 
 const ad = new ActiveDirectory(adConfig);
@@ -54,7 +56,7 @@ const findADUser = async (givenName?: string, familyName?: string): Promise<AdUs
 }
 
 const getDuoMFA = async (username: string) => {
-  const user = await new Promise((resolve, reject) => {
+  const user: DuoUserResponse = await new Promise((resolve, reject) => {
     duo.jsonApiCall('GET', `/admin/v1/users`, { username }, (res: any, err: any) => err ? reject(err) : resolve(res))
   })
 
@@ -65,7 +67,7 @@ const getDuoMFA = async (username: string) => {
   // get user_id from user object
   const user_id = user?.response[0]?.user_id
 
-  const bypassCodes = await new Promise((resolve, reject) => {
+  const bypassCodes: DuoBypassCodesResponse = await new Promise((resolve, reject) => {
     duo.jsonApiCall(
       'POST',
       `/admin/v1/users/${user_id}/bypass_codes`,

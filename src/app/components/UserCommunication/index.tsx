@@ -32,7 +32,9 @@ interface CommsStatus {
     };
   };
   readonly verified?: boolean;
-  readonly adUser?: object;
+  readonly adUser?: {
+    readonly sAMAccountName: string;
+  };
   readonly mfaCode?: string;
 }
 
@@ -187,18 +189,7 @@ const ResponseArea = (props: { reference?: string }) => {
               <div style={styles.vcHeader}>{statusMap.COMPLETE}</div>
               <div style={styles.vcItem}>Type: <strong>{response?.VCProof?.type.join(', ')}</strong></div>
               <div style={styles.vcItem}>Name: <strong>{response?.VCProof?.credentialSubject?.givenName} {response?.VCProof?.credentialSubject?.familyName}</strong></div>
-              <div style={styles.vcItem}>AD User Match: 
-                {response?.adUser ? (
-                  <table style={styles.adTable}>
-                    {Object.keys(response?.adUser).map((key, index) => (
-                      <tr key={index}>
-                        <td>{key}</td>
-                        <td><strong>{response?.adUser[key]}</strong></td>
-                      </tr>
-                    ))}
-                  </table>
-                ) : '❌'}
-              </div>
+              <div style={styles.vcItem}>AD User Match: {response?.adUser ? '✅' : '❌'}</div>
               <div style={styles.vcItem}>MFA Code: <strong>{response?.mfaCode}</strong></div>
               <div style={{...styles.vcItem,...styles.vcItemButton}}>
                 <a
