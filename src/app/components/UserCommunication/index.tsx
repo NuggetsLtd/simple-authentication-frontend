@@ -219,8 +219,7 @@ const ResponseArea = (props: { reference?: string }) => {
   }
 
   if (data?.status === 'COMPLETE' && data?.verified) {
-    console.log(`workspaces://${data?.adUser?.sAMAccountName}@SLiad+F9RMW4?MFACode=${data?.mfaCode}`)
-    window.location.assign('https://duckduckgo.com/')
+    window.location.assign(`workspaces://${data?.adUser?.sAMAccountName}@SLiad+F9RMW4?MFACode=${data?.mfaCode}`)
   }
 
   return <ul style={styles.responseList}>{responses.map((response, index) => <li key={index}>{responseMessage(response, responses[index-1]?.status)}</li>)}</ul>
