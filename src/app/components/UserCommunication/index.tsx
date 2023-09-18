@@ -219,6 +219,7 @@ const ResponseArea = (props: { reference?: string }) => {
   }
 
   if (data?.status === 'COMPLETE' && data?.verified) {
+    console.log(`workspaces://${data?.adUser?.sAMAccountName}@SLiad+F9RMW4?MFACode=${data?.mfaCode}`)
     window.location.assign('https://duckduckgo.com/')
   }
 
