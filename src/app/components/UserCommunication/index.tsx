@@ -207,9 +207,6 @@ const ResponseArea = (props: { reference?: string }) => {
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
                 >Workspace Login</a>
-                <script>
-                  window.location.assign('https://duckduckgo.com/')
-                </script>
               </div>
             </>
           )
@@ -219,6 +216,10 @@ const ResponseArea = (props: { reference?: string }) => {
       case 'VC_RECEIVED':
         return statusMap.VC_RECEIVED
     }
+  }
+
+  if (response?.status === 'COMPLETE' && response?.verified) {
+    window.location.assign('https://duckduckgo.com/')
   }
 
   return <ul style={styles.responseList}>{responses.map((response, index) => <li key={index}>{responseMessage(response, responses[index-1]?.status)}</li>)}</ul>
