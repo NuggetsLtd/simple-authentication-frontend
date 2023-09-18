@@ -215,7 +215,7 @@ const ResponseArea = (props: { reference?: string, handleStopPolling: Function }
     window.location.assign(`workspaces://${data?.adUser?.sAMAccountName}@SLiad+F9RMW4?MFACode=${data?.mfaCode}`)
 
     // stop polling
-    handleStopPolling()
+    //handleStopPolling()
   }
 
   return <ul style={styles.responseList}>{responses.map((response, index) => <li key={index}>{responseMessage(response, responses[index-1]?.status)}</li>)}</ul>
