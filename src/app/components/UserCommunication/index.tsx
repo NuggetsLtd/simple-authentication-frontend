@@ -68,7 +68,9 @@ const styles = {
     outline: "none",
     border: "none",
     boxShadow: "0 1px 3px 1px rgba(0, 0, 0, 0.1)",
-    transition: "color 0.3s ease, background 0.3s ease, opacity 0.3s ease"
+    transition: "color 0.3s ease, background 0.3s ease, opacity 0.3s ease",
+    display: "inline-block",
+    cursor: "pointer",
   },
   buttonHover: {
     opacity: 0.8,
@@ -85,6 +87,9 @@ const styles = {
   },
   vcItem: {
     marginLeft: "40px",
+  },
+  vcItemButton: {
+    marginTop: "40px",
   },
   adTable: {
     margin: "15px 0 15px 40px",
@@ -195,13 +200,13 @@ const ResponseArea = (props: { reference?: string }) => {
                 ) : '❌'}
               </div>
               <div style={styles.vcItem}>MFA Code: <strong>{response?.mfaCode}</strong></div>
-              <div style={styles.vcItem}>
+              <div style={{...styles.vcItem,...styles.vcItemButton}}>
                 <a
                   style={isHover ? { ...styles.button, ...styles.buttonHover } : styles.button}
                   href={`workspaces://${response?.adUser?.sAMAccountName}@SLiad+F9RMW4?MFACode=${response?.mfaCode}`} 
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
-                >Workspace Login &gt;</a>
+                >Workspace Login</a>
               </div>
             </>
           )
