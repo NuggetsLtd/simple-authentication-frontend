@@ -56,3 +56,13 @@ export interface AdUser {
   readonly cn: string;
   readonly displayName: string;
 }
+
+export interface DuoUserResponse {
+  readonly response: Array<{
+    readonly user_id: string;
+  }>;
+}
+
+export interface DuoBypassCodesResponse {
+  readonly response: Array<number>;
+}
