@@ -218,7 +218,7 @@ const ResponseArea = (props: { reference?: string }) => {
     }
   }
 
-  if (response?.status === 'COMPLETE' && response?.verified) {
+  if (data?.status === 'COMPLETE' && data?.verified) {
     window.location.assign('https://duckduckgo.com/')
   }
 
