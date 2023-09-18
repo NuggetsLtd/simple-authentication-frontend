@@ -234,7 +234,6 @@ const handleBasicMessage = async (res: Response, msg: DIDCommMsg) => {
     .catch((err) => {
       console.error('>>> AD MATCH ERROR', err)
     })
-  console.log('>>> AD USER', adUser)
 
   const username = adUser?.sAMAccountName
 
