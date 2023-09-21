@@ -192,7 +192,7 @@ const ResponseArea = (props: { reference?: string, handleStopPolling: Function }
               <div style={styles.vcItem}>Name: <strong>{response?.VCProof?.credentialSubject?.givenName} {response?.VCProof?.credentialSubject?.familyName}</strong></div>
               <div style={styles.vcItem}>AD User Match: {response?.adUser ? '✅' : '❌'}</div>
               <div style={styles.vcItem}>MFA Code Generated: <strong>{response?.mfaCode ? '✅' : '❌'}</strong></div>
-              <div>🔐 Opening Workspace Client</div>
+              <div style={{ marginTop: "15px" }}>🔐 Opening Workspace Client</div>
               {/* <div style={{...styles.vcItem,...styles.vcItemButton}}>
                 <a
                   style={isHover ? { ...styles.button, ...styles.buttonHover } : styles.button}
