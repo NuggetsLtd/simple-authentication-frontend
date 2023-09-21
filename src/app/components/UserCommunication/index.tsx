@@ -147,6 +147,7 @@ const ResponseArea = (props: { reference?: string, handleStopPolling: Function }
   const [responses, setResponses] = useState(defaultCommsStatus)
   const [refreshInterval, setRefreshInterval] = useState(500)
   const [isHover, setIsHover] = useState(false)
+  const [hasOpened, setHasOpended] = useState(false)
 
   const handleMouseEnter = () => setIsHover(true)
   const handleMouseLeave = () => setIsHover(false)
@@ -210,12 +211,15 @@ const ResponseArea = (props: { reference?: string, handleStopPolling: Function }
     }
   }
 
-  if (data?.status === 'COMPLETE' && data?.verified) {
+  if (data?.status === 'COMPLETE' && data?.verified && !hasOpened) {
+    // prevent further attempts to open workspace
+    setHasOpended(true)
+
     // open AWS Workspace client
     window.location.assign(`workspaces://${data?.adUser?.sAMAccountName}@SLiad+F9RMW4?MFACode=${data?.mfaCode}`)
 
     // stop polling
-    //handleStopPolling()
+    handleStopPolling()
   }
 
   return <ul style={styles.responseList}>{responses.map((response, index) => <li key={index}>{responseMessage(response, responses[index-1]?.status)}</li>)}</ul>
